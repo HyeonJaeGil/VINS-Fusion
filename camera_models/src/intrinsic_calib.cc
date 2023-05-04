@@ -267,6 +267,16 @@ main( int argc, char** argv )
 
         for ( size_t i = 0; i < cbImages.size( ); ++i )
         {
+            #if ( CV_VERSION_MAJOR >= 4 )
+            cv::putText( cbImages.at( i ),
+                         cbImageFilenames.at( i ),
+                         cv::Point( 10, 20 ),
+                         cv::FONT_HERSHEY_COMPLEX,
+                         0.5,
+                         cv::Scalar( 255, 255, 255 ),
+                         1,
+                         cv::LINE_AA);
+            #else
             cv::putText( cbImages.at( i ),
                          cbImageFilenames.at( i ),
                          cv::Point( 10, 20 ),
@@ -275,6 +285,7 @@ main( int argc, char** argv )
                          cv::Scalar( 255, 255, 255 ),
                          1,
                          CV_AA );
+            #endif
             cv::imshow( "Image", cbImages.at( i ) );
             cv::waitKey( 0 );
         }

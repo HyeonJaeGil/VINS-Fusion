@@ -232,7 +232,11 @@ CameraCalibration::drawResults(std::vector<cv::Mat>& images) const
         cv::Mat& image = images.at(i);
         if (image.channels() == 1)
         {
+            #if (CV_VERSION_MAJOR >= 4)
+            cv::cvtColor(image, image, cv::COLOR_GRAY2RGB);
+            #else
             cv::cvtColor(image, image, CV_GRAY2RGB);
+            #endif
         }
 
         std::vector<cv::Point2f> estImagePoints;
@@ -247,6 +251,16 @@ CameraCalibration::drawResults(std::vector<cv::Mat>& images) const
             cv::Point2f pObs = m_imagePoints.at(i).at(j);
             cv::Point2f pEst = estImagePoints.at(j);
 
+            #if (CV_VERSION_MAJOR >= 4)
+            cv::circle(image,
+                       cv::Point(cvRound(pObs.x * drawMultiplier),
+                                 cvRound(pObs.y * drawMultiplier)),
+                       5, green, 2, cv::LINE_AA, drawShiftBits);
+            cv::circle(image,
+                       cv::Point(cvRound(pEst.x * drawMultiplier),
+                                 cvRound(pEst.y * drawMultiplier)),
+                       5, red, 2, cv::LINE_AA, drawShiftBits);
+            #else
             cv::circle(image,
                        cv::Point(cvRound(pObs.x * drawMultiplier),
                                  cvRound(pObs.y * drawMultiplier)),
@@ -256,6 +270,7 @@ CameraCalibration::drawResults(std::vector<cv::Mat>& images) const
                        cv::Point(cvRound(pEst.x * drawMultiplier),
                                  cvRound(pEst.y * drawMultiplier)),
                        5, red, 2, CV_AA, drawShiftBits);
+            #endif 
 
             float error = cv::norm(pObs - pEst);
 
@@ -269,10 +284,15 @@ CameraCalibration::drawResults(std::vector<cv::Mat>& images) const
         std::ostringstream oss;
         oss << "Reprojection error: avg = " << errorSum / m_imagePoints.at(i).size()
             << "   max = " << errorMax;
-
+        #if (CV_VERSION_MAJOR >= 4)
+        cv::putText(image, oss.str(), cv::Point(10, image.rows - 10),
+                    cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(255, 255, 255),
+                    1, cv::LINE_AA);
+        #else
         cv::putText(image, oss.str(), cv::Point(10, image.rows - 10),
                     cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(255, 255, 255),
                     1, CV_AA);
+        #endif
     }
 }
 
