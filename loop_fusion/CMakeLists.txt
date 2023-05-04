@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(loop_fusion)
 
 set(CMAKE_BUILD_TYPE "Release")
-set(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
+set(CMAKE_CXX_STANDARD 17)
 #-DEIGEN_USE_MKL_ALL")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -g")
 
@@ -15,7 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
     roslib
     )
 
-find_package(OpenCV)
+find_package(OpenCV 3 REQUIRED)
+message(WARNING "OpenCV_VERSION: ${OpenCV_VERSION}")
 
 
 find_package(Ceres REQUIRED)
