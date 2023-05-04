@@ -13,6 +13,7 @@
 
 #include <thread>
 #include <mutex>
+#include <experimental/filesystem>
 #include <opencv2/opencv.hpp>
 #include <eigen3/Eigen/Dense>
 #include <string>

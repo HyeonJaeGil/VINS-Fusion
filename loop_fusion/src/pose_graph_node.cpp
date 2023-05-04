@@ -451,11 +451,21 @@ int main(int argc, char **argv)
 
     fsSettings["image0_topic"] >> IMAGE_TOPIC;        
     fsSettings["pose_graph_save_path"] >> POSE_GRAPH_SAVE_PATH;
-    fsSettings["output_path"] >> VINS_RESULT_PATH;
     fsSettings["save_image"] >> DEBUG_IMAGE;
-
-    LOAD_PREVIOUS_POSE_GRAPH = fsSettings["load_previous_pose_graph"];
-    VINS_RESULT_PATH = VINS_RESULT_PATH + "/vio_loop.csv";
+    fsSettings["output_path"] >> VINS_RESULT_PATH;
+    
+    const auto tilde_pos = VINS_RESULT_PATH.find("~");
+    if (tilde_pos != std::string::npos) {
+        const std::string home_dir = std::getenv("HOME");
+        VINS_RESULT_PATH.replace(tilde_pos, 1, home_dir);
+    }
+    if (!std::experimental::filesystem::exists(VINS_RESULT_PATH))
+    {
+        std::experimental::filesystem::create_directory(VINS_RESULT_PATH);
+    }
+    // VINS_RESULT_PATH = VINS_RESULT_PATH + "/vio_loop.csv";
+    VINS_RESULT_PATH = VINS_RESULT_PATH + "vio_loop.txt";
+    std::cout << "VINS_RESULT_PATH: " << VINS_RESULT_PATH << std::endl;
     std::ofstream fout(VINS_RESULT_PATH, std::ios::out);
     fout.close();
 
@@ -463,6 +473,7 @@ int main(int argc, char **argv)
     posegraph.setIMUFlag(USE_IMU);
     fsSettings.release();
 
+    LOAD_PREVIOUS_POSE_GRAPH = fsSettings["load_previous_pose_graph"];
     if (LOAD_PREVIOUS_POSE_GRAPH)
     {
         printf("load pose graph\n");

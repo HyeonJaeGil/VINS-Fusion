@@ -836,21 +836,37 @@ void PoseGraph::updatePath()
             path[(*it)->sequence].header = pose_stamped.header;
         }
 
-        if (SAVE_LOOP_PATH)
+        // if (SAVE_LOOP_PATH)
+        // {
+        //     ofstream loop_path_file(VINS_RESULT_PATH, ios::app);
+        //     loop_path_file.setf(ios::fixed, ios::floatfield);
+        //     loop_path_file.precision(0);
+        //     loop_path_file << (*it)->time_stamp * 1e9 << ",";
+        //     loop_path_file.precision(5);
+        //     loop_path_file  << P.x() << ","
+        //           << P.y() << ","
+        //           << P.z() << ","
+        //           << Q.w() << ","
+        //           << Q.x() << ","
+        //           << Q.y() << ","
+        //           << Q.z() << ","
+        //           << endl;
+        //     loop_path_file.close();
+        // }
+        if (SAVE_LOOP_PATH) // TUM RGB-D format
         {
             ofstream loop_path_file(VINS_RESULT_PATH, ios::app);
             loop_path_file.setf(ios::fixed, ios::floatfield);
-            loop_path_file.precision(0);
-            loop_path_file << (*it)->time_stamp * 1e9 << ",";
             loop_path_file.precision(5);
-            loop_path_file  << P.x() << ","
-                  << P.y() << ","
-                  << P.z() << ","
-                  << Q.w() << ","
-                  << Q.x() << ","
-                  << Q.y() << ","
-                  << Q.z() << ","
-                  << endl;
+            loop_path_file << (*it)->time_stamp << " "
+                        << P.x() << " "
+                        << P.y() << " "
+                        << P.z() << " "
+                        << Q.x() << " "
+                        << Q.y() << " "
+                        << Q.z() << " "
+                        << Q.w() << " "
+                        << endl;
             loop_path_file.close();
         }
         //draw local connection

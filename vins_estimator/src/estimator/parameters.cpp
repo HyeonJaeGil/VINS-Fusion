@@ -108,7 +108,20 @@ void readParameters(std::string config_file)
     MIN_PARALLAX = MIN_PARALLAX / FOCAL_LENGTH;
 
     fsSettings["output_path"] >> OUTPUT_FOLDER;
-    VINS_RESULT_PATH = OUTPUT_FOLDER + "/vio.csv";
+    const auto tilde_pos = OUTPUT_FOLDER.find("~");
+    if (tilde_pos != std::string::npos) {
+        const std::string home_dir = std::getenv("HOME");
+        OUTPUT_FOLDER.replace(tilde_pos, 1, home_dir);
+    }
+    std::experimental::filesystem::path folder = OUTPUT_FOLDER;
+    std::experimental::filesystem::path filename = "vio.txt";
+    std::experimental::filesystem::path filepath = folder / filename;
+    if (!std::experimental::filesystem::exists(OUTPUT_FOLDER))
+    {
+        std::experimental::filesystem::create_directory(OUTPUT_FOLDER);
+    }
+    VINS_RESULT_PATH = filepath.string();
+    // VINS_RESULT_PATH = OUTPUT_FOLDER + "/vio.csv";
     std::cout << "result path " << VINS_RESULT_PATH << std::endl;
     std::ofstream fout(VINS_RESULT_PATH, std::ios::out);
     fout.close();
